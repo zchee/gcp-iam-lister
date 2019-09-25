@@ -57,6 +57,10 @@ golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 # google.golang.org/api v0.10.0
+google.golang.org/api/cloudresourcemanager/v1
+google.golang.org/api/gensupport
+google.golang.org/api/googleapi
+google.golang.org/api/googleapi/internal/uritemplates
 google.golang.org/api/googleapi/transport
 google.golang.org/api/internal
 google.golang.org/api/iterator
@@ -78,7 +82,7 @@ google.golang.org/appengine/internal/socket
 google.golang.org/appengine/internal/urlfetch
 google.golang.org/appengine/socket
 google.golang.org/appengine/urlfetch
-# google.golang.org/genproto v0.0.0-20190916214212-f660b8655731
+# google.golang.org/genproto v0.0.0-20190925194540-b8fbc687dcfb
 google.golang.org/genproto/googleapis/api/annotations
 google.golang.org/genproto/googleapis/iam/admin/v1
 google.golang.org/genproto/googleapis/iam/v1
