@@ -1,3 +1,4 @@
+// Command gcp-iam-lister for detecting IAM roles of the members for the specified Google Cloud Platform project.
 package main
 
 import (
