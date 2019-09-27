@@ -7,7 +7,7 @@ import (
 
 	"cloud.google.com/go/iam"
 	iamadminv1 "cloud.google.com/go/iam/admin/apiv1"
-	"google.golang.org/api/option"
+	apioption "google.golang.org/api/option"
 	adminpb "google.golang.org/genproto/googleapis/iam/admin/v1"
 	iampb "google.golang.org/genproto/googleapis/iam/v1"
 )
@@ -20,7 +20,10 @@ type IAM struct {
 
 // NewClient returns the new iamadminv1.IamClient.
 func NewClient(ctx context.Context, projectID, credfile string) (*IAM, error) {
-	c, err := iamadminv1.NewIamClient(ctx, option.WithCredentialsFile(credfile))
+	opts := []apioption.ClientOption{
+		apioption.WithCredentialsFile(credfile),
+	}
+	c, err := iamadminv1.NewIamClient(ctx, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create IamClient: %w", err)
 	}
@@ -32,12 +35,12 @@ func NewClient(ctx context.Context, projectID, credfile string) (*IAM, error) {
 }
 
 // Close closes the iam client.
-func (iam *IAM) Close() error {
-	return iam.Close()
+func (i *IAM) Close() error {
+	return i.client.Close()
 }
 
-func (iam *IAM) GetIamPolicy(ctx context.Context, resource string) (*iam.Policy, error) {
-	return iam.client.GetIamPolicy(ctx, &iampb.GetIamPolicyRequest{
+func (i *IAM) GetIamPolicy(ctx context.Context, resource string) (*iam.Policy, error) {
+	return i.client.GetIamPolicy(ctx, &iampb.GetIamPolicyRequest{
 		Resource: resource,
 	})
 }
@@ -57,8 +60,8 @@ func (iam *IAM) NewGetRequest(saEmail string) *GetRequest {
 }
 
 // GetServiceAccounts lists ServiceAccounts for a project.
-func (iam *IAM) GetServiceAccounts(ctx context.Context, req *GetRequest) (*adminpb.ServiceAccount, error) {
-	return iam.client.GetServiceAccount(ctx, req.req)
+func (i *IAM) GetServiceAccounts(ctx context.Context, req *GetRequest) (*adminpb.ServiceAccount, error) {
+	return i.client.GetServiceAccount(ctx, req.req)
 }
 
 // ListRequest provides the service account list request.
@@ -67,10 +70,10 @@ type ListRequest struct {
 }
 
 // NewListRequest returns the new ListRequest.
-func (iam *IAM) NewListRequest(pageSize int32, pageToken string) *ListRequest {
+func (i *IAM) NewListRequest(pageSize int32, pageToken string) *ListRequest {
 	return &ListRequest{
 		req: &adminpb.ListServiceAccountsRequest{
-			Name:      path.Join("projects", iam.projectID),
+			Name:      path.Join("projects", i.projectID),
 			PageSize:  pageSize,
 			PageToken: pageToken,
 		},
@@ -78,7 +81,7 @@ func (iam *IAM) NewListRequest(pageSize int32, pageToken string) *ListRequest {
 }
 
 // ListServiceAccounts lists ServiceAccounts for a project.
-func (iam *IAM) ListServiceAccounts(ctx context.Context, req *ListRequest) (results []*adminpb.ServiceAccount, nextPageToken string, err error) {
-	resp := iam.client.ListServiceAccounts(ctx, req.req)
+func (i *IAM) ListServiceAccounts(ctx context.Context, req *ListRequest) (results []*adminpb.ServiceAccount, nextPageToken string, err error) {
+	resp := i.client.ListServiceAccounts(ctx, req.req)
 	return resp.InternalFetch(int(req.req.PageSize), req.req.PageToken)
 }
